@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -22,78 +24,84 @@ class MyApp extends StatelessWidget {
               backgroundColor: const Color.fromARGB(255, 10, 61, 98)),
           body: Center(
               child: Container(
-            color: const Color.fromARGB(255, 7, 153, 146),
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/img1.jpeg"),
+                fit: BoxFit.cover,
+              ),
+            ),
             width: 1248,
             child: Column(
               children: [
                 Container(
-                    // width: 256,
-                    // height: 64,
                     decoration: const BoxDecoration(
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          offset: Offset(10, 2),
-                          blurRadius: 10,
-                        ),
-                        // BoxShadow(
-                        //   color: Color(0x80000000),
-                        //   offset: Offset(0, 6),
-                        //   blurRadius: 20,
-                        // ),
-                      ],
-                      shape: BoxShape.circle,
-                      // borderRadius: BorderRadius.all(
-                      //   Radius.circular(50),
-                      // ),
-                      gradient: LinearGradient(
-                        begin: Alignment(0, -1),
-                        end: Alignment(0, 1),
-                        colors: <Color>[
-                          Color.fromARGB(255, 7, 153, 146),
-                          Color.fromARGB(255, 229, 143, 38),
-                          Color.fromARGB(255, 7, 153, 146),
-                        ],
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
                       ),
+                      // boxShadow: <BoxShadow>[
+                      //   BoxShadow(
+                      //     color: Color.fromARGB(255, 0, 0, 0),
+                      //     offset: Offset(10, 2),
+                      //     blurRadius: 10,
+                      //   ),
+                      // ],
+                      // shape: BoxShape.circle,
+                      // gradient: LinearGradient(
+                      //   begin: Alignment(0, -1),
+                      //   end: Alignment(0, 1),
+                      //   colors: <Color>[
+                      //     Color.fromARGB(255, 7, 153, 146),
+                      //     Color.fromARGB(255, 229, 143, 38),
+                      //     Color.fromARGB(255, 7, 153, 146),
+                      //   ],
+                      // ),
                     ),
                     padding: const EdgeInsets.all(16),
-                    width: 160,
-                    height: 160,
-                    child: const Center(
-                      child: Text(
-                        'first Hello World',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 248, 195, 145),
-                            fontFamily: "Georgia",
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                    )),
+                    width: 256,
+                    height: 128,
+                    child: ClipRRect(
+                        // borderRadius: Column.radius,
+                        child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: const Center(
+                              child: Text(
+                                'first Hello World',
+                                // overflow: TextOverflow.ellipsis,
+                                // maxLines: 2,
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontFamily: "Georgia",
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            )))),
                 Container(
                     width: 256,
                     height: 64,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(50),
                       ),
-                      gradient: LinearGradient(
-                        begin: Alignment(1, -1),
-                        end: Alignment(1, 1),
-                        colors: <Color>[
-                          Color(0x00ef5350),
-                          Color.fromARGB(255, 229, 143, 38),
-                          Color(0x00ef5350),
-                        ],
-                      ),
+                      // gradient: const LinearGradient(
+                      //   begin: Alignment(1, -1),
+                      //   end: Alignment(1, 1),
+                      //   colors: <Color>[
+                      //     Color.fromARGB(0, 255, 255, 255),
+                      //     Color.fromARGB(183, 255, 255, 255),
+                      //     Color.fromARGB(0, 255, 255, 255),
+                      //   ],
+                      // ),
                     ),
                     child: const Center(
                       child: Text(
                         'Second World',
                         style: TextStyle(
-                            color: Color.fromARGB(255, 248, 195, 145),
+                            color: Color.fromARGB(255, 0, 0, 0),
                             fontFamily: "Georgia",
                             fontSize: 30,
                             fontWeight: FontWeight.bold),
