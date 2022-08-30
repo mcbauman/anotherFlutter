@@ -1,16 +1,23 @@
 # second_flutter
+Small Excercise to build an first App as ToDo List. Shall have the same look and functionality as the website. It will work with an own Storage but syncronise to the server too.
 
-A new Flutter project.
 
-## Getting Started
+import 'package:hive/hive.dart';
 
-This project is a starting point for a Flutter application.
+part 'user.g.dart';
 
-A few resources to get you started if this is your first Flutter project:
+@HiveType(typeId: 1)
+class UserClass {
+  UserClass({required this.name, required this.email, required this.password});
+  @HiveField(0)
+  late int id;
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+  @HiveField(1)
+  late String name;
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  @HiveField(2)
+  late String email;
+
+  @HiveField(3)
+  late String password;
+}

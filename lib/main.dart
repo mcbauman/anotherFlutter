@@ -1,8 +1,20 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:second_flutter/Classes.dart';
 
-void main() {
+late var box;
+Future<void> main() async {
+  await Hive.initFlutter();
+  box = await Hive.openBox('Box');
+  Hive.registerAdapter(ItemClassAdapter());
+  box.put(
+      'itemClass',
+      ItemClass(
+          userId: 2,
+          name: "task from Flutter",
+          discription: "But Still hardcoded"));
   runApp(const MyApp());
 }
 
@@ -11,6 +23,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ItemClass item = box.get("itemClass");
+    print(item);
     return MaterialApp(
         title: 'Welcome to Flutter',
         home: Stack(children: [
@@ -41,56 +55,52 @@ class MyApp extends StatelessWidget {
                   backgroundColor: const Color.fromARGB(130, 255, 255, 255)),
               body: Center(
                   child: Column(children: [
-                Container(
-                    margin: const EdgeInsets.all(10),
-                    child: ClipRRect(
-                        child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                                width: 512,
-                                height: 128,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: const Color.fromARGB(
-                                            180, 255, 255, 255),
-                                        width: 1),
-                                    color: const Color.fromARGB(
-                                        45, 255, 255, 255)),
-                                child: const Center(
-                                    child: Text(
-                                  'first Hello World',
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                )))))),
-                Container(
-                    margin: const EdgeInsets.all(10),
-                    child: ClipRRect(
-                        child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                                width: 512,
-                                height: 128,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: const Color.fromARGB(
-                                            180, 255, 255, 255),
-                                        width: 1),
-                                    color: const Color.fromARGB(
-                                        45, 255, 255, 255)),
-                                child: const Center(
-                                    child: Text(
-                                  'Second World',
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
-                                ))))))
+                ListItem(),
+                ListItem(),
+                ListItem(),
+                ListItem(),
+                ListItem(),
+                ListItem(),
+                ListItem(),
+                ListItem(),
               ])))
         ]));
   }
 }
+
+class ListItem extends StatefulWidget {
+  const ListItem({Key? key}) : super(key: key);
+
+  @override
+  State<ListItem> createState() => _ListItemState();
+}
+
+class _ListItemState extends State<ListItem> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.all(10),
+        child: ClipRRect(
+            child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
+                        border: Border.all(
+                            color: const Color.fromARGB(180, 255, 255, 255),
+                            width: 1),
+                        color: const Color.fromARGB(45, 255, 255, 255)),
+                    child: const Center(
+                        child: Text(
+                      'first Hello World',
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ))))));
+  }
+}
+
 
 // void main() {
 //   runApp(const MyApp());
