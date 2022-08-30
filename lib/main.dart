@@ -53,22 +53,32 @@ class MyApp extends StatelessWidget {
                   backgroundColor: const Color.fromARGB(130, 255, 255, 255)),
               body: Center(
                   child: Column(children: [
-                ListItem(),
-                ListItem(),
-                ListItem(),
-                ListItem(),
-                ListItem(),
-                ListItem(),
-                ListItem(),
-                ListItem(),
+                ListItem(item: item),
+                ListItem(item: item2),
+                ListItem(item: item3),
+                //for (int i=0;i<items.length;i++){ListItem(item: items[i])},
+                // items.forEach((element) {
+                //   print(element.name);
+                // })
+                //     for (var element in items) {print(element.name);},
+                // items.map((e) => print(e.discription))
+                // items.forEach((element)=>ListItem(item:element)),
+                // ListItem(),
+                // ListItem(),
+                // ListItem(),
+                // ListItem(),
+                // ListItem(),
+                // ListItem(),
+                // ListItem(),
               ])))
         ]));
   }
 }
 
 class ListItem extends StatefulWidget {
-  const ListItem({Key? key}) : super(key: key);
+  const ListItem({Key? key, required this.item}) : super(key: key);
 
+  final ItemClass item;
   @override
   State<ListItem> createState() => _ListItemState();
 }
@@ -89,13 +99,20 @@ class _ListItemState extends State<ListItem> {
                             color: const Color.fromARGB(180, 255, 255, 255),
                             width: 1),
                         color: const Color.fromARGB(45, 255, 255, 255)),
-                    child: const Center(
-                        child: Text(
-                      'first Hello World',
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ))))));
+                    child: Row(children: [
+                      Expanded(
+                          child: Text(
+                        widget.item.name,
+                        style: const TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      )),
+                      Expanded(
+                          child: Text(
+                        widget.item.discription,
+                        style: const TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ))
+                    ])))));
   }
 }
 
