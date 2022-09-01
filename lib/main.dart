@@ -1,7 +1,11 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:second_flutter/classes/itemClass.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+String token =
+    "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMiIsImV4cCI6MTY2MjEwNTk3Mn0.H41Ec3CXo5DoxM5JziyqtxZBtfoIH0Gd_qsjKz9udIXh8t9jufxzQfFfw6zHqTT0MwnCeTjzG5yw2Nzz0qpz0w";
 
 void main() {
   runApp(const MyApp());
@@ -20,11 +24,40 @@ class MyApp extends StatelessWidget {
         userId: 2,
         name: "thirdTask",
         discription: "and a third created by Flutter");
-    List<ItemClass> items = [item3, item2, item];
+    //List<ItemClass> items = [item3, item2, item];
+    final items = <ItemClass>[item3, item2, item];
     items.forEach((element) => print(element.name));
+    String user = "Matthias";
+
+    Future<List<ItemClass>> getRequest() async {
+      //replace your restFull API here.
+      var api = Uri.http("http://localhost:5004", "getItems");
+      final response = await http.get(api);
+
+      var responseData = json.decode(response.body);
+
+      //Creating a list to store input data;
+      List<ItemClass> reqItems = [];
+      for (var singleUser in responseData) {
+        ItemClass user = ItemClass(
+            userId: singleUser["userId"],
+            name: singleUser["name"],
+            discription: singleUser["discription"]);
+
+        //Adding user to the list.
+        reqItems.add(user);
+      }
+      reqItems.forEach((element) {
+        print(element.discription);
+      });
+      return reqItems;
+    }
 
     return MaterialApp(
         title: 'Welcome to Flutter',
+        // themeMode: ThemeMode.system,
+        // theme: MyThemes.lightTheme,
+        // darkTheme: MyThemes.darkTheme,
         home: Stack(children: [
           Container(
               decoration: const BoxDecoration(
@@ -32,45 +65,88 @@ class MyApp extends StatelessWidget {
                       image: AssetImage("assets/img1.jpeg"),
                       fit: BoxFit.cover))),
           Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                  elevation: 0,
-                  flexibleSpace: ClipRRect(
-                      child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
-                    child: Container(
-                      color: Colors.transparent,
-                    ),
-                  )),
-                  //backgroundColor: Colors.transparent,
-                  title: const Text(
-                    'ToDoList',
-                    style: TextStyle(
-                      backgroundColor: Colors.transparent,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+                elevation: 0,
+                leading: const IconButton(
+                    onPressed: null, icon: Icon(Icons.dark_mode)),
+                title: Text(
+                  user == "" ? "LogIn" : "$user's ToDoList",
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
-                  backgroundColor: const Color.fromARGB(130, 255, 255, 255)),
-              body: Center(
-                  child: Column(children: [
-                ListItem(item: item),
-                ListItem(item: item2),
-                ListItem(item: item3),
-                //for (int i=0;i<items.length;i++){ListItem(item: items[i])},
-                // items.forEach((element) {
-                //   print(element.name);
-                // })
-                //     for (var element in items) {print(element.name);},
-                // items.map((e) => print(e.discription))
-                // items.forEach((element)=>ListItem(item:element)),
-                // ListItem(),
-                // ListItem(),
-                // ListItem(),
-                // ListItem(),
-                // ListItem(),
-                // ListItem(),
-                // ListItem(),
-              ])))
+                ),
+                backgroundColor: const Color.fromARGB(130, 255, 255, 255)),
+            body:
+                // Body
+                Container(
+              padding: const EdgeInsets.all(16.0),
+              child: FutureBuilder(
+                future: getRequest(),
+                builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+                  if (snapshot.data == null) {
+                    return Container(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (ctx, index) => ListTile(
+                        title: Text(snapshot.data[index].title),
+                        subtitle: Text(snapshot.data[index].body),
+                        contentPadding: EdgeInsets.only(bottom: 20.0),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+
+//            Column(
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //crossAxisAlignment: CrossAxisAlignment.stretch,
+//                children: [
+//                  ListItem(item: item2),
+//                  ListItem(item: item2),
+//                  ListItem(item: item3),
+            // Expanded(child: ListItem(item: item)),
+            //for (int i=0;i<items.length;i++){ListItem(item: items[i])},
+            // items.forEach((element) {
+            //   print(element.name);
+            // })
+            //     for (var element in items) {print(element.name);},
+            // items.map((e) => print(e.discription))
+            // items.forEach((element)=>ListItem(item:element)),
+            // ListItem(),
+            // ListItem(),
+            // ListItem(),
+            // ListItem(),
+            // ListItem(),
+            // ListItem(),
+            // ListItem(),
+//                ]),
+            floatingActionButton: FloatingActionButton(
+                tooltip: 'Add',
+                onPressed: null,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: ClipRRect(
+                    child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10.0)),
+                              border: Border.all(
+                                  color:
+                                      const Color.fromARGB(180, 255, 255, 255),
+                                  width: 1),
+                              color: const Color.fromARGB(45, 255, 255, 255)),
+                          child: const Icon(Icons.add),
+                        )))),
+          )
         ]));
   }
 }
@@ -104,17 +180,19 @@ class _ListItemState extends State<ListItem> {
                           child: Text(
                         widget.item.name,
                         style: const TextStyle(fontSize: 20),
-                        textAlign: TextAlign.center,
+                        //textAlign: TextAlign.center,
                       )),
                       Expanded(
                           child: Text(
                         widget.item.discription,
                         style: const TextStyle(fontSize: 20),
-                        textAlign: TextAlign.center,
+                        //textAlign: TextAlign.center,
                       ))
                     ])))));
   }
 }
+
+
 
 
 
