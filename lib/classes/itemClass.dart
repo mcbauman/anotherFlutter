@@ -1,6 +1,6 @@
 class ItemClass {
-  late int id;
-  late int userId;
+  late String id;
+  late String userId;
   late String name;
   late String discription;
   ItemClass(
