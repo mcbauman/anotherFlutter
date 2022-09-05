@@ -1,17 +1,19 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:second_flutter/classes/itemClass.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 String token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MmY0MDEzY2I3ZmNiMzg2NjQ4ZGE1NWMiLCJpYXQiOjE2NjIxMDAyODEsImV4cCI6MTY2MjE4NjY4MX0.0-WO-hHx4_F1YdfTAzp5x_0Gw7QmuYKiPriqpnDzfYM";
-int user = 2;
+// int user = 2;
+var any = MyModel();
+
 void main() {
   runApp(const MyApp2());
 }
 
-//https://todolistmcb.herokuapp.com
 class MyApp2 extends StatefulWidget {
   const MyApp2({Key? key}) : super(key: key);
 
@@ -43,85 +45,101 @@ class _MyApp2State extends State<MyApp2> {
       return reqItems;
     }
 
-    return MaterialApp(
-        title: 'Welcome to Flutter',
-        // themeMode: ThemeMode.system,
-        // theme: MyThemes.lightTheme,
-        // darkTheme: MyThemes.darkTheme,
-        home: Stack(children: [
-          Container(
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/img1.jpeg"),
-                      fit: BoxFit.cover))),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(
-                flexibleSpace: ClipRRect(
-                    child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container())),
-                elevation: 0,
-                leading: const IconButton(
-                    onPressed: null, icon: Icon(Icons.dark_mode)),
-                title: Text(
-                  user == 0 ? "LogIn" : "$user's ToDoList",
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                      onPressed: () => {
-                            setState(() {
-                              user = 0;
-                            }),
-                            print(user)
-                          },
-                      child: Text(
-                          style: TextStyle(fontSize: 20, color: Colors.black),
-                          "Logout")),
-                ],
-                backgroundColor: const Color.fromARGB(100, 255, 255, 255)),
-            body: user == 0
-                ? Login()
-                : Container(
-                    margin: const EdgeInsets.fromLTRB(0, 100, 0, 0),
-                    child: FutureBuilder(
-                        future: getRequest(),
-                        builder: (BuildContext ctx, AsyncSnapshot snapshot) {
-                          if (snapshot.data == null) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else {
-                            return ListView.builder(
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (ctx, index) =>
-                                    ListItem(item: snapshot.data[index]));
-                          }
-                        })),
-            floatingActionButton: FloatingActionButton(
-                tooltip: 'Add',
-                onPressed: null,
+    return ChangeNotifierProvider<MyModel>(
+        //      <--- ChangeNotifierProvider
+        create: (context) => MyModel(),
+        child: MaterialApp(
+            title: 'Welcome to Flutter',
+            // themeMode: ThemeMode.system,
+            // theme: MyThemes.lightTheme,
+            // darkTheme: MyThemes.darkTheme,
+            home: Stack(children: [
+              Container(
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("assets/img1.jpeg"),
+                          fit: BoxFit.cover))),
+              Scaffold(
                 backgroundColor: Colors.transparent,
-                elevation: 0,
-                child: ClipRRect(
-                    child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10.0)),
-                              border: Border.all(
+                appBar: AppBar(
+                    flexibleSpace: ClipRRect(
+                        child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container())),
+                    elevation: 0,
+                    leading: const IconButton(
+                        onPressed: null, icon: Icon(Icons.dark_mode)),
+                    title: Consumer<MyModel>(//                    <--- Consumer
+                        builder: (context, myModel, child) {
+                      return Text(
+                        any.user == "0" ? "LogIn" : "${any.user}'s ToDoList",
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      );
+                    }),
+                    actions: [
+                      TextButton(
+                          onPressed: () => {
+                                setState(() {
+                                  any.setUser("0");
+                                })
+
+                                // setState(() {
+                                //   any.user = "0";
+                                // }),
+                                // print(any.user)
+                              },
+                          child: Text(
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.black),
+                              "Logout")),
+                    ],
+                    backgroundColor: const Color.fromARGB(100, 255, 255, 255)),
+                body: Consumer<MyModel>(//                    <--- Consumer
+                    builder: (context, myModel, child) {
+                  return any.user == "0"
+                      ? Login()
+                      : Container(
+                          margin: const EdgeInsets.fromLTRB(0, 100, 0, 0),
+                          child: FutureBuilder(
+                              future: getRequest(),
+                              builder:
+                                  (BuildContext ctx, AsyncSnapshot snapshot) {
+                                if (snapshot.data == null) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else {
+                                  return ListView.builder(
+                                      itemCount: snapshot.data.length,
+                                      itemBuilder: (ctx, index) =>
+                                          ListItem(item: snapshot.data[index]));
+                                }
+                              }));
+                }),
+                floatingActionButton: FloatingActionButton(
+                    tooltip: 'Add',
+                    onPressed: null,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    child: ClipRRect(
+                        child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10.0)),
+                                  border: Border.all(
+                                      color: const Color.fromARGB(
+                                          180, 255, 255, 255),
+                                      width: 1),
                                   color:
-                                      const Color.fromARGB(180, 255, 255, 255),
-                                  width: 1),
-                              color: const Color.fromARGB(45, 255, 255, 255)),
-                          child: const Icon(Icons.add),
-                        )))),
-          )
-        ]));
+                                      const Color.fromARGB(45, 255, 255, 255)),
+                              child: const Icon(Icons.add),
+                            )))),
+              )
+            ])));
   }
 }
 
@@ -135,29 +153,43 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          Text(user.toString()),
-          TextFormField(
-              decoration: const InputDecoration(hintText: 'Enter your name')),
-          TextFormField(
-              decoration:
-                  const InputDecoration(hintText: 'Enter your password')),
-          IconButton(
-              onPressed: () {
-                print("Login-Submit-Pressed");
-                setState(() {
-                  user = 2;
-                });
-                print(user);
-              },
-              icon: const Icon(Icons.login))
-          // Add TextFormFields and ElevatedButton here.
-        ],
-      ),
-    );
+    return ChangeNotifierProvider<MyModel>(
+        //      <--- ChangeNotifierProvider
+        create: (context) => MyModel(),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              Text(any.user),
+              TextFormField(
+                  decoration:
+                      const InputDecoration(hintText: 'Enter your name')),
+              TextFormField(
+                  decoration:
+                      const InputDecoration(hintText: 'Enter your password')),
+              Consumer<MyModel>(builder: (context, myModel, child) {
+                return IconButton(
+                    onPressed: () => {
+                          setState(() {
+                            any.setUser("2");
+                          })
+                        },
+
+                    // onPressed: () => {
+                    //   // print("Login-Submit-Pressed")
+                    //   setState() {any.setUser("0");}
+
+                    //   // setState(() {
+                    //   //   any.user = "2";
+                    //   // });
+                    //   // print("User in LoginClass ${any.user}");
+                    // },
+                    icon: const Icon(Icons.login));
+              })
+              // Add TextFormFields and ElevatedButton here.
+            ],
+          ),
+        ));
   }
 }
 
@@ -215,127 +247,27 @@ class _ListItemState extends State<ListItem> {
   }
 }
 
+class MyModel with ChangeNotifier {
+  String user = '2';
+
+  void setUser(String newUser) {
+    user = newUser;
+    print("SetUSerFUnction in MyModel $user");
+    notifyListeners();
+  }
+}
 
 
-
-
-
-
-
-
-// void main() {
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
+// class Context extends StatefulWidget with ChangeNotifier {
+//   String user = "0";
 
 //   @override
+//   State<Context> createState() => _ContextState();
+// }
+
+// class _ContextState extends State<Context> {
+//   @override
 //   Widget build(BuildContext context) {
-//     return MaterialApp(
-//         title: 'Welcome to Flutter',
-//         home: Scaffold(
-//           appBar: AppBar(
-//               title: const Text(
-//                 'Welcome to Flutter',
-//                 style: TextStyle(
-//                   color: Color.fromARGB(255, 229, 143, 38),
-//                 ),
-//               ),
-//               backgroundColor: const Color.fromARGB(255, 10, 61, 98)),
-//           body: Center(
-//               child: Container(
-//             decoration: const BoxDecoration(
-//               image: DecorationImage(
-//                 image: AssetImage("assets/img1.jpeg"),
-//                 fit: BoxFit.cover,
-//               ),
-//             ),
-//             width: 1248,
-//             child: Column(
-//               children: [
-//                 Container(
-//                     decoration: const BoxDecoration(
-//                       borderRadius: BorderRadius.all(
-//                         Radius.circular(5),
-//                       ),
-//                       // boxShadow: <BoxShadow>[
-//                       //   BoxShadow(
-//                       //     color: Color.fromARGB(255, 0, 0, 0),
-//                       //     offset: Offset(10, 2),
-//                       //     blurRadius: 10,
-//                       //   ),
-//                       // ],
-//                       // shape: BoxShape.circle,
-//                       // gradient: LinearGradient(
-//                       //   begin: Alignment(0, -1),
-//                       //   end: Alignment(0, 1),
-//                       //   colors: <Color>[
-//                       //     Color.fromARGB(255, 7, 153, 146),
-//                       //     Color.fromARGB(255, 229, 143, 38),
-//                       //     Color.fromARGB(255, 7, 153, 146),
-//                       //   ],
-//                       // ),
-//                     ),
-//                     padding: const EdgeInsets.all(16),
-//                     width: 256,
-//                     height: 128,
-//                     child: ClipRRect(
-//                         // borderRadius: Column.radius,
-//                         child: BackdropFilter(
-//                             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-//                             child: const Center(
-//                               child: Text(
-//                                 'first Hello World',
-//                                 // overflow: TextOverflow.ellipsis,
-//                                 // maxLines: 2,
-//                                 style: TextStyle(
-//                                     color: Color.fromARGB(255, 0, 0, 0),
-//                                     fontFamily: "Georgia",
-//                                     fontSize: 30,
-//                                     fontWeight: FontWeight.bold),
-//                                 textAlign: TextAlign.center,
-//                               ),
-//                             )))),
-//                 Container(
-//                     width: 256,
-//                     height: 64,
-//                     decoration: BoxDecoration(
-//                       border: Border.all(
-//                         color: Colors.black,
-//                         width: 1,
-//                       ),
-//                       borderRadius: const BorderRadius.all(
-//                         Radius.circular(50),
-//                       ),
-//                       // gradient: const LinearGradient(
-//                       //   begin: Alignment(1, -1),
-//                       //   end: Alignment(1, 1),
-//                       //   colors: <Color>[
-//                       //     Color.fromARGB(0, 255, 255, 255),
-//                       //     Color.fromARGB(183, 255, 255, 255),
-//                       //     Color.fromARGB(0, 255, 255, 255),
-//                       //   ],
-//                       // ),
-//                     ),
-//                     child: ClipRRect(
-//                         // borderRadius: Column.radius,
-//                         child: BackdropFilter(
-//                             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-//                             child: const Center(
-//                               child: Text(
-//                                 'Second World',
-//                                 style: TextStyle(
-//                                     color: Color.fromARGB(255, 0, 0, 0),
-//                                     fontFamily: "Georgia",
-//                                     fontSize: 30,
-//                                     fontWeight: FontWeight.bold),
-//                                 textAlign: TextAlign.center,
-//                               ),
-//                             ))))
-//               ],
-//             ),
-//           )),
-//         ));
+//     return 
 //   }
 // }
