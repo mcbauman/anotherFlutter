@@ -15,14 +15,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  set tkn(tkn) {}
+
   @override
   Widget build(BuildContext context) {
-    Future<List<ItemClass>> getRequest() async {
+    Future<List<ItemClass>> getRequest(String tkn) async {
       var api = Uri.http("todolistmcb.herokuapp.com", "getItems");
       var response = await http.post(api, headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $tkn"
       });
+      print('TOKEN BEFORE GET ITEMS: $tkn}');
       print('Response body: ${response.body}');
       var responseData = json.decode(response.body);
       List<ItemClass> reqItems = [];
@@ -83,7 +86,8 @@ class MyApp extends StatelessWidget {
                           : Container(
                               margin: const EdgeInsets.fromLTRB(0, 100, 0, 0),
                               child: FutureBuilder(
-                                  future: getRequest(),
+                                  future:
+                                      getRequest(tkn = notifier.currentUSer),
                                   builder: (BuildContext ctx,
                                       AsyncSnapshot snapshot) {
                                     if (snapshot.data == null) {
@@ -131,24 +135,6 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Future<List<ItemClass>> loginUser() async {
-    //   var api = Uri.http("todolistmcb.herokuapp.com", "getItems");
-    //   var response = await http.post(api, headers: {
-    //     "Content-Type": "application/json",
-    //     "Authorization": "Bearer $token"
-    //   });
-    //   print('SEDOND RESPONSE: ${response.body}');
-    //   var responseData = json.decode(response.body);
-    //   List<ItemClass> reqItems = [];
-    //   for (var singleUser in responseData) {
-    //     ItemClass user = ItemClass(
-    //         userId: singleUser["UserId"],
-    //         name: singleUser["itemName"],
-    //         discription: singleUser["discription"]);
-    //     reqItems.add(user);
-    //   }
-    //   return reqItems;
-    // }
     Future<String> logInUser() async {
       var x = await http.post(
           Uri.parse('http://todolistmcb.herokuapp.com/login'),
@@ -156,7 +142,7 @@ class Login extends StatelessWidget {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode(
-              <String, String>{'name': "torge", 'password': "aA@123456"}));
+              <String, String>{'name': "matthias", 'password': "aA@123456"}));
       return x.body;
     }
 
@@ -237,7 +223,7 @@ class _ListItemState extends State<ListItem> {
 }
 
 class SettingsScreenNotifier extends ChangeNotifier {
-  String _currentUser = "2";
+  String _currentUser = "0";
   get currentUSer => _currentUser;
   void switchUser(String newUser) {
     _currentUser = newUser;
