@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 String token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MmY0MDEzY2I3ZmNiMzg2NjQ4ZGE1NWMiLCJpYXQiOjE2NjMwNjE0ODYsImV4cCI6MTY2MzE0Nzg4Nn0.zo3bHi_pBANsWBSGfNo3fB5gwsp1JbfQS6X5wV19OzY";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MmY0MDEzY2I3ZmNiMzg2NjQ4ZGE1NWMiLCJpYXQiOjE2NjMxNDg2MzksImV4cCI6MTY2MzIzNTAzOX0.wva9PcZvITfXWoaD13aRxKnMpCYu1R6S84hoY19GIh0";
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
       });
       print('Response body: ${response.body}');
       var responseData = json.decode(response.body);
-
       List<ItemClass> reqItems = [];
       for (var singleUser in responseData) {
         ItemClass user = ItemClass(
@@ -42,6 +41,7 @@ class MyApp extends StatelessWidget {
         builder: (context, provider) {
           return Consumer<SettingsScreenNotifier>(
             builder: (context, notifier, child) {
+              print('HERE!!! ${notifier.currentUSer}');
               return MaterialApp(
                   title: 'Welcome to Flutter',
                   home: Stack(children: [
@@ -131,6 +131,35 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Future<List<ItemClass>> loginUser() async {
+    //   var api = Uri.http("todolistmcb.herokuapp.com", "getItems");
+    //   var response = await http.post(api, headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": "Bearer $token"
+    //   });
+    //   print('SEDOND RESPONSE: ${response.body}');
+    //   var responseData = json.decode(response.body);
+    //   List<ItemClass> reqItems = [];
+    //   for (var singleUser in responseData) {
+    //     ItemClass user = ItemClass(
+    //         userId: singleUser["UserId"],
+    //         name: singleUser["itemName"],
+    //         discription: singleUser["discription"]);
+    //     reqItems.add(user);
+    //   }
+    //   return reqItems;
+    // }
+    Future<String> logInUser() async {
+      var x = await http.post(
+          Uri.parse('http://todolistmcb.herokuapp.com/login'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(
+              <String, String>{'name': "torge", 'password': "aA@123456"}));
+      return x.body;
+    }
+
     return Consumer<SettingsScreenNotifier>(
         builder: (context, notifier, child) {
       return Form(
@@ -143,7 +172,7 @@ class Login extends StatelessWidget {
                 decoration:
                     const InputDecoration(hintText: 'Enter your password')),
             IconButton(
-                onPressed: () => {notifier.switchUser("2")},
+                onPressed: () async => {notifier.switchUser(await logInUser())},
                 icon: const Icon(Icons.login))
           ],
         ),
