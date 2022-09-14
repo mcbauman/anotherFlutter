@@ -145,21 +145,69 @@ class Login extends StatelessWidget {
       return Form(
         child: Column(
           children: <Widget>[
-            TextFormField(
-                decoration: const InputDecoration(hintText: 'Enter your name'),
-                onChanged: (value) {
-                  name = value;
-                }),
-            TextFormField(
-                decoration:
-                    const InputDecoration(hintText: 'Enter your password'),
-                onChanged: (value) {
-                  password = value;
-                }),
-            IconButton(
-                onPressed: () async =>
-                    {notifier.switchUser(await logInUser(name, password))},
-                icon: const Icon(Icons.login))
+            Container(
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: ClipRRect(
+                    child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10.0)),
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        180, 255, 255, 255),
+                                    width: 1),
+                                color:
+                                    const Color.fromARGB(100, 255, 255, 255)),
+                            child: TextFormField(
+                                decoration: const InputDecoration(
+                                    hintText: 'Enter your name'),
+                                onChanged: (value) {
+                                  name = value;
+                                }))))),
+            Container(
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: ClipRRect(
+                    child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10.0)),
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        180, 255, 255, 255),
+                                    width: 1),
+                                color:
+                                    const Color.fromARGB(100, 255, 255, 255)),
+                            child: TextFormField(
+                                decoration: const InputDecoration(
+                                    hintText: 'Enter your password'),
+                                onChanged: (value) {
+                                  password = value;
+                                }))))),
+            Container(
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: ClipRRect(
+                    child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10.0)),
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        180, 255, 255, 255),
+                                    width: 1),
+                                color:
+                                    const Color.fromARGB(100, 255, 255, 255)),
+                            child: IconButton(
+                                onPressed: () async => {
+                                      notifier.switchUser(
+                                          await logInUser(name, password))
+                                    },
+                                icon: const Icon(Icons.login))))))
           ],
         ),
       );
