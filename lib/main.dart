@@ -129,14 +129,6 @@ class MyApp extends StatelessWidget {
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
 
-  //   var api = Uri.http("todolistmcb.herokuapp.com", "getItems");
-  // var response = await http.post(api, headers: {
-  //   "Content-Type": "application/json",
-  //   "Authorization": "Bearer $token"
-  // });
-  // print('Response body: ${response.body}');
-  // var responseData = json.decode(response.body);
-
   @override
   Widget build(BuildContext context) {
     return Consumer<SettingsScreenNotifier>(
