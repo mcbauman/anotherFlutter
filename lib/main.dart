@@ -5,9 +5,6 @@ import 'package:second_flutter/classes/itemClass.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-String token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MmY0MDEzY2I3ZmNiMzg2NjQ4ZGE1NWMiLCJpYXQiOjE2NjMxNDg2MzksImV4cCI6MTY2MzIzNTAzOX0.wva9PcZvITfXWoaD13aRxKnMpCYu1R6S84hoY19GIh0";
-
 void main() {
   runApp(const MyApp());
 }
@@ -25,8 +22,6 @@ class MyApp extends StatelessWidget {
         "Content-Type": "application/json",
         "Authorization": "Bearer $tkn"
       });
-      print('TOKEN BEFORE GET ITEMS: $tkn}');
-      print('Response body: ${response.body}');
       var responseData = json.decode(response.body);
       List<ItemClass> reqItems = [];
       for (var singleUser in responseData) {
@@ -44,7 +39,6 @@ class MyApp extends StatelessWidget {
         builder: (context, provider) {
           return Consumer<SettingsScreenNotifier>(
             builder: (context, notifier, child) {
-              print('HERE!!! ${notifier.currentUSer}');
               return MaterialApp(
                   title: 'Welcome to Flutter',
                   home: Stack(children: [
@@ -65,9 +59,7 @@ class MyApp extends StatelessWidget {
                           leading: const IconButton(
                               onPressed: null, icon: Icon(Icons.dark_mode)),
                           title: Text(
-                            notifier.currentUSer == "0"
-                                ? "LogIn"
-                                : "${notifier.currentUSer}'s ToDoList",
+                            notifier.currentUSer == "0" ? "LogIn" : "ToDoList",
                             style: const TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
                             ),
@@ -82,7 +74,7 @@ class MyApp extends StatelessWidget {
                           backgroundColor:
                               const Color.fromARGB(100, 255, 255, 255)),
                       body: notifier.currentUSer == "0"
-                          ? const Login()
+                          ? Login()
                           : Container(
                               margin: const EdgeInsets.fromLTRB(0, 100, 0, 0),
                               child: FutureBuilder(
@@ -131,18 +123,20 @@ class MyApp extends StatelessWidget {
 }
 
 class Login extends StatelessWidget {
-  const Login({Key? key}) : super(key: key);
+  Login({Key? key}) : super(key: key);
+  late String name;
+  late String password;
 
   @override
   Widget build(BuildContext context) {
-    Future<String> logInUser() async {
+    Future<String> logInUser(String name, String password) async {
       var x = await http.post(
           Uri.parse('http://todolistmcb.herokuapp.com/login'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(
-              <String, String>{'name': "matthias", 'password': "aA@123456"}));
+          body:
+              jsonEncode(<String, String>{'name': name, 'password': password}));
       return x.body;
     }
 
@@ -151,14 +145,20 @@ class Login extends StatelessWidget {
       return Form(
         child: Column(
           children: <Widget>[
-            Text(notifier.currentUSer),
             TextFormField(
-                decoration: const InputDecoration(hintText: 'Enter your name')),
+                decoration: const InputDecoration(hintText: 'Enter your name'),
+                onChanged: (value) {
+                  name = value;
+                }),
             TextFormField(
                 decoration:
-                    const InputDecoration(hintText: 'Enter your password')),
+                    const InputDecoration(hintText: 'Enter your password'),
+                onChanged: (value) {
+                  password = value;
+                }),
             IconButton(
-                onPressed: () async => {notifier.switchUser(await logInUser())},
+                onPressed: () async =>
+                    {notifier.switchUser(await logInUser(name, password))},
                 icon: const Icon(Icons.login))
           ],
         ),
